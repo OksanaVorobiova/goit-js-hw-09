@@ -5,19 +5,24 @@ const refs = {
 
 const { startBtn, stopBtn } = refs;
 let intervalId = null;
-let isActive = false;
+startBtn.disabled = false;
+stopBtn.disabled = true;
 
 startBtn.addEventListener('click', onStartBtn);
 stopBtn.addEventListener('click', onStopBtn);
 
 function onStartBtn(e) {
-    if (!isActive) {
-        isActive = true;
+    if (startBtn.disabled) {
+        return;
+    }
+    
         intervalId = setInterval(() => {
             document.body.style.backgroundColor = getRandomHexColor();
         }, 1000);
-       // console.log('new color');
-    }
+    console.log('new color');
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    
 }
 
 function getRandomHexColor() {
@@ -25,8 +30,9 @@ function getRandomHexColor() {
 }
 
 function onStopBtn(e) {
-    if (isActive) {
+    if (!stopBtn.disabled) {
         clearInterval(intervalId);
-        isActive = false;
+        stopBtn.disabled = true;
+        startBtn.disabled = false;
     }
 }
