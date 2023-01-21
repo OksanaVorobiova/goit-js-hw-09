@@ -16,7 +16,6 @@ const { input, startBtn, daysValue, hoursValue, minutesValue, secondsValue } = r
 startBtn.disabled = true;
 let timerId = null;
 
-console.log('ghghj');
 
 const options = {
   enableTime: true,
@@ -25,38 +24,21 @@ const options = {
   minuteIncrement: 1,
   onClose: function(selectedDates) {
     console.log(selectedDates[0]);  
+    let timeDifferenceInMs = selectedDates[0].getTime() - Date.now();
 
-    if (selectedDates[0].getTime() < Date.now()) {
-      Notify.failure("Please choose a date in the future");
-      startBtn.disabled = true;
-    } else {
-      
+    if (timeDifferenceInMs < 0) {
+      pastTimeChosen();
+    } else {     
       startBtn.disabled = false;
-      startBtn.addEventListener('click', () => {
-      startBtn.disabled = true;
 
-        timerId = setInterval(() => {
-          const ms = selectedDates[0].getTime() - Date.now();
-          const timeObj = convertMs(ms);
-          
-          daysValue.textContent = timeObj.days;
-          hoursValue.textContent = timeObj.hours;
-          minutesValue.textContent = timeObj.minutes;
-          secondsValue.textContent = timeObj.seconds;
-
-          if (timeObj.days === 0 && timeObj.hours === "00" && timeObj.minutes === "00" && timeObj.seconds === "00") {
-          clearInterval(timerId);
-            }
-        }, 1000);       
-      });
+      runTimer(selectedDates);
+     
     }
   },
 };
 
-startBtn.disabled = true;
 
 flatpickr(input, options);
-
 
 
 function convertMs(ms) {
@@ -81,4 +63,39 @@ function convertMs(ms) {
 
 function addLeadingZero(value) {
   return value.toString().padStart(2, 0);
+}
+
+function pastTimeChosen() {
+   Notify.failure("Please choose a date in the future");
+  startBtn.disabled = true;
+  return;
+}
+
+function runTimer(selectedDates) {
+  startBtn.addEventListener('click', () => {
+    
+      timerId = setInterval(() => {
+        let ms = selectedDates[0].getTime() - Date.now();
+        const timeObj = convertMs(ms);
+        //startBtn.disabled = true;
+          
+        makeTimerInterface(timeObj);
+
+        setTimeout(() => {
+          startBtn.disabled = true;
+        }, 0);
+
+        if (timeObj.days === 0 && timeObj.hours === "00" && timeObj.minutes === "00" && timeObj.seconds === "00") {
+          clearInterval(timerId);
+        }
+      }, 1000);
+    
+  });
+}
+
+function makeTimerInterface(timeObj) {
+  daysValue.textContent = timeObj.days;
+  hoursValue.textContent = timeObj.hours;
+  minutesValue.textContent = timeObj.minutes;
+  secondsValue.textContent = timeObj.seconds;
 }
