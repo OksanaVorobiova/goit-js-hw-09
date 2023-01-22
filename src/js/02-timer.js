@@ -77,13 +77,9 @@ function runTimer(selectedDates) {
       timerId = setInterval(() => {
         let ms = selectedDates[0].getTime() - Date.now();
         const timeObj = convertMs(ms);
-        //startBtn.disabled = true;
+        startBtn.disabled = true;
           
         makeTimerInterface(timeObj);
-
-        setTimeout(() => {
-          startBtn.disabled = true;
-        }, 0);
 
         if (timeObj.days === 0 && timeObj.hours === "00" && timeObj.minutes === "00" && timeObj.seconds === "00") {
           clearInterval(timerId);
